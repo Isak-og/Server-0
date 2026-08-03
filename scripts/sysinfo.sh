@@ -75,3 +75,24 @@ else
 
 fi
 echo
+if docker info >/dev/null 2>&1; then
+    echo "Docker Service : Running"
+
+    echo "Total Containers : $(docker ps -aq | wc -l)"
+    echo "Running          : $(docker ps -q | wc -l)"
+    echo "Stopped          : $(docker ps -aq -f status=exited | wc -l)"
+    echo "Restarting       : $(docker ps -aq -f status=restarting | wc -l)"
+    echo "Paused           : $(docker ps -aq -f status=paused | wc -l)"
+    echo "Dead             : $(docker ps -aq -f status=dead | wc -l)"
+
+    echo
+    echo "Running Containers"
+    docker ps --format "  {{.Names}} - {{.Status}}"
+
+    echo
+    echo "Stopped Containers"
+    docker ps -a --filter status=exited --format "  {{.Names}} - {{.Status}}"
+
+else
+    echo "Docker Service : Not Running"
+fi
